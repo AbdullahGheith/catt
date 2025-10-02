@@ -564,7 +564,14 @@ def scan(json_output):
     devices = get_cast_infos()
 
     if json_output:
-        echo_json({d.friendly_name: d._asdict() for d in devices})
+        echo_json({d.friendly_name: {
+            'host': d.host,
+            'port': d.port,
+            'uuid': d.uuid,
+            'model_name': d.model_name,
+             'friendly_name': d.friendly_name,
+             'manufacturer': d.manufacturer
+        } for d in devices})
     else:
         if not devices:
             raise CastError("No devices found")
