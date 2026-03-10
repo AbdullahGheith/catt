@@ -215,6 +215,12 @@ def cli(ctx, device):
     help="Start playback at specific timestamp.",
 )
 @click.option(
+    "-l",
+    "--title",
+    metavar="TITLE",
+    help="Specify a title for the media file.",
+)
+@click.option(
     "-b",
     "--block",
     is_flag=True,
@@ -238,6 +244,7 @@ def cast(
     no_playlist: bool,
     ytdl_option,
     seek_to: str,
+    title: str,
     stream_type: str,
     block: bool = False,
 ):
@@ -300,14 +307,14 @@ def cast(
         click.echo(
             '{} "{}" on "{}"...'.format(
                 "Showing" if media_is_image else "Playing",
-                stream.video_title,
+                title or stream.video_title,
                 cst.cc_name,
             )
         )
         if cst.info_type == "url":
             cst.play_media_url(
                 stream.video_url,
-                title=stream.video_title,
+                title=title or stream.video_title,
                 content_type=stream.guessed_content_type,
                 subtitles=subs.url if subs else None,
                 thumb=stream.video_thumbnail,
