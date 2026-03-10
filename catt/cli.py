@@ -221,6 +221,13 @@ def cli(ctx, device):
     help="Specify a title for the media file.",
 )
 @click.option(
+    "-v",
+    "--volume",
+    type=click.IntRange(0, 100),
+    metavar="LVL",
+    help="Set volume (0-100).",
+)
+@click.option(
     "-b",
     "--block",
     is_flag=True,
@@ -245,6 +252,7 @@ def cast(
     ytdl_option,
     seek_to: str,
     title: str,
+    volume: int,
     stream_type: str,
     block: bool = False,
 ):
@@ -311,6 +319,9 @@ def cast(
                 cst.cc_name,
             )
         )
+        if volume is not None:
+            cst.volume(volume / 100.0)
+
         if cst.info_type == "url":
             cst.play_media_url(
                 stream.video_url,
@@ -319,8 +330,8 @@ def cast(
                 subtitles=subs.url if subs else None,
                 thumb=stream.video_thumbnail,
                 current_time=seek_to,
-                stream_type=stream.stream_type,
-                media_info=stream.media_info,
+                stream_type=getattr(stream, "stream_type", None),
+                media_info=getattr(stream, "media_info", None),
             )
         elif cst.info_type == "id":
             cst.play_media_id(stream.video_id, current_time=seek_to)
